@@ -1,0 +1,61 @@
+.navbar-light .navbar-nav .nav-link{
+    color: #003B4A;
+    transition: all .5s ease-in-out;
+}
+.navbar-light .navbar-nav .nav-link:hover{ 
+    color:#FF19B3; 
+}
+.navbar-light .navbar-nav .nav-link.active {
+    color: #003B4A;
+}
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+    background-color: #003B4A;
+}
+.dropdown-item {
+    color: #13c2c9;
+    transition: all .2s ease-in-out;
+}
+.dropdown-item:hover{
+    color: #003B4A;
+    background-color: #00f8ff;
+}
+
+
+/* Início Menu Principal*/
+.menu-principal{
+    font-family: 'Staatliches', cursive;
+    font-size: 1.6rem;
+    letter-spacing: .05rem;
+}
+.menu-principal li a:hover{
+    letter-spacing: .1rem;
+    text-shadow: 1px 1px 1px #003B4A;
+}
+/* Fim Menu Principal*/
+
+/* Início Menu Secundário*/
+.menu-secundario{
+    font-family: 'Staatliches', cursive;
+    font-size: 1.2rem;     
+}.menu-secundario li a:hover{
+    color:#003B4A !important;
+}
+.menu-secundario .dropdown-item:active {
+    color: #2b2b2b;
+    text-decoration: none;
+    background-color: #00f8ff;  
+}
+/* Fim Menu Secundário*/
+
+.menu-login{
+    font-family: 'Staatliches', cursive;
+    font-size: 1.2rem;
+    
+}.menu-login li a{
+    color: #003B4A !important;
+}.menu-login li a:hover{
+    
+    letter-spacing: .05rem;
+    color: #FF19B3 !important;
+    text-shadow: #003B4A 1px 1px 1px !important;
+}

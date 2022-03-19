@@ -1,0 +1,69 @@
+@media (min-width: 768px){
+    .sidebar{
+        width: 14rem !important;
+        min-height: 100vh;
+    }
+}
+
+/* BOTÃO PRINCIPAL */
+.btn-info{
+    background-color: #00f8ff;
+    border-color: #00f8ff;
+    transition: all .4s ease-in-out;
+}
+.btn-info:hover {
+    color: #003B4A;
+    background-color: #FF19B3;
+    border-color: #FF19B3;
+}
+.btao{
+    font-family: 'Bebas Neue', cursive;
+    font-size: x-large;
+    font-weight: bold;
+    letter-spacing: .1rem;
+    width: 100%;
+    color: #003B4A;
+}
+/* FIM BOTÃO PRINCIPAL */
+
+.form-label{
+    font-family: 'Roboto', sans-serif;
+}
+
+/* ALERTAS */
+.alert-danger {
+    font-family: 'Roboto', sans-serif;
+    color: #5a1313;
+    background-color: #ff6969;
+    border-color: #ff6969;
+}
+.alert-danger li a{
+    color: #5a1313;
+}.alert-danger li a:hover{
+    color: #2b2b2b;
+}
+.alert-success {
+    font-family: 'Roboto', sans-serif;
+    color: #0f5132;
+    background-color: #69ffbb;
+    border-color: #69ffbb;
+}
+/* FIM ALERTAS */
+
+.login-register .form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #00f8ff;
+    box-shadow: 0 0 0 0.25rem rgb(0 248 255 / 21%);
+}
+.login-register a{
+    color:#13c2c9;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all .4s ease-in-out;
+}
+.login-register a:hover{
+    color:#FF19B3;
+    text-decoration: none;
+    font-weight: bold;
+}

@@ -1,0 +1,80 @@
+{% extends '/bases/base_login.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2 class="display-2 text-center mt-2 mb-4 pb-3" style="font-family: 'Bebas Neue', cursive; font-weight:bold; font-size:45px; letter-spacing: .1rem; border-bottom: 1px solid #dee2e6!important;">LOGIN</h2>
+    
+    <form class="login-register" action="" method="post">
+        {{ form.csrf_token }}
+
+        {% with sucessos = get_flashed_messages(category_filter=['sucesso']) %}
+            {% if sucessos %}
+            <div class="alert alert-success" role="alert">
+                <ul class="m-0 p-0 list-unstyled">
+                    {% for msg in sucessos %}
+                        <li><i class="fa-solid fa-circle-check"></i> {{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% with erros = get_flashed_messages(category_filter=['erro']) %}
+            {% if erros %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="m-0 p-0 list-unstyled">
+                    {% for msg in erros %}
+                        <li><i class="fa-solid fa-circle-exclamation"></i> {{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-group mb-3">
+            <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i> Email: </label>
+            {{ form.email(class="form-control") }}
+
+            {% if form.email.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for erro in form.email.errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="senha" class="form-label"><i class="fa-solid fa-lock"></i> Senha: </label>
+            {{ form.senha(class="form-control") }}
+
+            {% if form.senha.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for erro in form.senha.errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.lembrar_me(class="form-check-input", id="lembrar_me") }}   
+            <label class="form-check-label" for="lembrar_me">Lembrar-me</label>
+        </div>
+
+        <div id="registerHelpBlock" class="form-text mb-4">
+            <i class="fa-solid fa-circle-info"></i> Ainda não tenho uma conta. <a href="{{ url_for('clientes.register') }}">CRIAR CONTA.</a>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <button type="submit" class="btn btn-info btao text-center"><i class="fa-solid fa-right-to-bracket me-1"></i>ENTRAR</button>
+            </div>
+        </div>
+    </form>
+    
+{% endblock %}

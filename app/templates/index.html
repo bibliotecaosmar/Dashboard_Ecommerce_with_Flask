@@ -1,0 +1,15 @@
+{% extends '/bases/base.html' %}
+
+{% block title %}Flask Blueprint {% endblock %}
+
+{% block content %}    
+    <h1>Projeto flask</h1>
+
+    {% if usuario %}
+        <p>Bem-vindo {{usuario}}</p>
+    {% else %}
+        <p>Bem-vindo usuario</p>
+    {% endif %}
+    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit, accumsan aliquet tincidunt nisl ac neque, est eros enim phasellus auctor mauris. Ante purus non tellus ex tempus venenatis auctor elementum id pharetra, vel montes cras lacus neque sem at vivamus pulvinar leo, nec vehicula aliquet amet aenean sociosqu fringilla convallis molestie. Dui urna vulputate ornare lacus adipiscing mauris pharetra massa suspendisse mollis dictum non rhoncus nisi vel turpis, malesuada egestas fringilla aptent eu maximus sodales eros ligula id aliquet parturient est ad. Mattis curabitur euismod a etiam vel, porta fames aptent ligula vulputate dolor, sed urna netus hac. Sapien vehicula nam conubia sagittis ex aptent et fusce potenti, semper varius morbi viverra nunc fermentum gravida metus, in imperdiet interdum natoque etiam tempus per eleifend.</p>
+
+{% endblock %}
