@@ -18,7 +18,7 @@ format:
 lint:
 	@poetry run black . --check
 	@poetry run isort . --check
-	@poetry run prospector --with-tool pep257 --doc-warning
+	@poetry run prospector --with-tool pep257
 
 test:
 	@poetry run pytest -v
