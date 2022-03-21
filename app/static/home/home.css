@@ -1,0 +1,76 @@
+.navbar-light .navbar-brand {
+    font-family: 'staatlichesregular';
+    letter-spacing: .05rem;
+    color: #00f8ff;
+}.navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
+    color: #ff19b3;
+    text-shadow: 1px 2px 1px #000d30;
+}
+
+.navbar-light .navbar-nav .nav-link{
+    color: #f6f6f6;
+    transition: all .5s ease-in-out;
+}
+.navbar-light .navbar-nav .nav-link:hover{ 
+    color: #00f8ff;
+}
+.navbar-light .navbar-nav .nav-link:focus{
+    color: #f6f6f6;
+}
+.navbar-light .navbar-nav .nav-link.active {
+    color: #ff19b3;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+    background-color: #00f8ff;
+}
+.dropdown-item {
+    color: #001a5e;
+    transition: all .2s ease-in-out;
+}
+.dropdown-item:hover{
+    color: #00f8ff;
+    background-color: #001a5e;
+}
+
+
+/* Início Menu Principal*/
+.menu-principal{
+    font-family: 'staatlichesregular', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: .05rem;
+}
+.menu-principal li a:hover{
+    letter-spacing: .1rem;
+    text-shadow: 1px 2px 1px #000d30;
+}
+/* Fim Menu Principal*/
+
+/* MENU DO CLIENTE */
+.menu-user{
+    font-family: 'staatlichesregular', sans-serif;
+    font-size: 1.2rem;     
+}
+.menu-user li a:hover{
+    color:#00f8ff !important;
+}.menu-user li a:focus{
+    color:#00f8ff !important;
+}
+.menu-user .dropdown-item:active {
+    color: #2b2b2b;
+    text-decoration: none;
+    background-color: #00f8ff;  
+}
+/* FIM MENU DO CLIENTE */
+
+.menu-login{
+    font-family: 'staatlichesregular', sans-serif;
+    font-size: 1.2rem;
+    
+}.menu-login li a{
+    color: #FF19B3 !important;
+}.menu-login li a:hover{  
+    letter-spacing: .05rem;
+    color: #00f8ff !important;
+    text-shadow: 1px 2px 1px #000d30 !important;
+}
