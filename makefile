@@ -4,8 +4,6 @@ install:
 	@poetry install
 
 init:
-	@poetry add --dev black
-	@poetry add --dev isort
 	@poetry add --dev prospector
 	@poetry add --dev pip-audit
 	@poetry add --dev pytest
@@ -16,9 +14,7 @@ format:
 	@black .
 
 lint:
-	@poetry run black . --check
-	@poetry run isort . --check
-	@poetry run prospector --with-tool pep257
+	@poetry run prospector --with-tool pydocstyle --doc-warning
 
 test:
 	@poetry run pytest -v
