@@ -1,19 +1,5 @@
 import pytest
 
-def create_app():
-    from flask import Flask
-
-    app = Flask(__name__)
-    app.config.from_object('config')
-
-    from app.home.controller import home
-    from app.clientes.controllers import clientes
-
-    app.register_blueprint(home)
-    app.register_blueprint(clientes)
-
-    return app
-
 
 @pytest.fixture()
 def app():
