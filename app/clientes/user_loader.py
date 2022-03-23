@@ -1,4 +1,4 @@
-from app import lm
+from app.login_manager import lm
 from app.clientes.models import Cliente
 
 

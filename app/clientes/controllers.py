@@ -3,7 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
-from app import db
+from app.model import db
 
 from app.clientes.forms import LoginForm, RegisterForm
 from app.clientes.models import Cliente
