@@ -1,3 +1,4 @@
 ignore-path:
+  - prospector.yaml
   - requirements.txt
   - migrations
