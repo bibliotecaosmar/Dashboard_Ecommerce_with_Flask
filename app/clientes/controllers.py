@@ -1,9 +1,14 @@
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, Markup
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
 from app import db
+
+# Confirmação de email
+from itsdangerous import URLSafeTimedSerializer, TimestampSigner, SignatureExpired, BadSignature
+from app import mail
+from flask_mail import Message
 
 from app.clientes.forms import LoginForm, RegisterForm
 from app.clientes.models import Cliente
@@ -15,6 +20,8 @@ def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+s = URLSafeTimedSerializer('secret')
 
 @clientes.route('/login', methods=['GET', 'POST'])
 def login(): 
@@ -48,23 +55,43 @@ def register():
         form = RegisterForm()
 
         if form.validate_on_submit():
-
             cliente = Cliente.query.filter_by(email=form.email.data).first()
-
             if cliente:
-                flash('Email já cadastrado', 'erro')
+                flash(Markup('Email já cadastrado. Ir para <a href="{}">página de login.</a>'.format(url_for('clientes.login'))), 'erro')
                 return redirect(url_for('clientes.register'))
+    
+            email = form.email.data
+            token = s.dumps(email, salt='email-confirm')
+            msg = Message('Confirm Email', sender='matheusoliveirasv@gmail.com', recipients=[email])
+            link = url_for('clientes.confirm_email', token=token, _external=True)
+            msg.body = 'Seu link de confirmacao {}'.format(link)
+            mail.send(msg)
+            flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
-            cliente = Cliente(form.nome.data, form.email.data, generate_password_hash(form.senha.data, method='sha256'), 1)
-
-            db.session.add(cliente)
-            db.session.commit()
-            flash('Usuário cadastrado com sucesso.', 'sucesso')
+            # cliente = Cliente(form.nome.data, form.email.data, generate_password_hash(form.senha.data, method='sha256'), 1)
+            # db.session.add(cliente)
+            # db.session.commit()
+            # flash('Usuário cadastrado com sucesso.', 'sucesso')
             return redirect(url_for('clientes.login'))
 
         return render_template('clientes/register.html', form=form)
 
     return redirect(url_for('home.index'))
+
+@clientes.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+        print(email)
+    except SignatureExpired:
+        flash('Seu link de confirmação de email foi expirado.', 'erro')
+        return redirect(url_for('clientes.register'))
+    except BadSignature:
+        flash('Link de confirmação inválido.', 'erro')
+        return redirect(url_for('clientes.login'))
+
+    flash('Seu email foi confirmado.', 'sucesso')
+    return redirect(url_for('clientes.login'))
 
 @clientes.route('/logout')
 @login_required

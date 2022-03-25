@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -15,6 +16,8 @@ app.config.from_object('config')
 
 # Define banco de dados importados em controllers
 db = SQLAlchemy(app)
+
+mail = Mail(app)
 
 migrate = Migrate(app, db)
 
