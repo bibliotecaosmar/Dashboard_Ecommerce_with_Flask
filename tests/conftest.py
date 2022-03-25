@@ -1,7 +1,5 @@
 import pytest
 
-# from app import create_app
-
 
 # @pytest.fixture()
 # def app():
@@ -13,6 +11,7 @@ import pytest
 #     )
 
 #     # other setup can go here
+#     from app.clientes import models
 
 #     yield app
 
