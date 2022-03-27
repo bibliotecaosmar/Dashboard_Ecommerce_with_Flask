@@ -25,6 +25,18 @@
             {% endif %}
         {% endwith %}
 
+        {% with erros = get_flashed_messages(category_filter=['email']) %}
+            {% if erros %}
+            <div class="alert alert-warning" role="alert">
+                <ul class="m-0 p-0 list-unstyled">
+                    {% for msg in erros %}
+                        <li><i class="fa-solid fa-circle-exclamation"></i> {{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="form-group mb-3">
             <label for="nome" class="form-label"><i class="fa-solid fa-circle-user"></i> Nome: </label>
             {{ form.nome(class="form-control") }}

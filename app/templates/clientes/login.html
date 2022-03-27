@@ -84,8 +84,11 @@
             <label class="form-check-label" for="lembrar_me">Lembrar-me</label>
         </div>
 
-        <div id="registerHelpBlock" class="form-text mb-4">
-            <i class="fa-solid fa-circle-info"></i> Ainda não tenho uma conta. <a href="{{ url_for('clientes.register') }}">CRIAR CONTA.</a>
+        <div id="registerHelpBlock" class="form-text mb-2">
+            <i class="fa-solid fa-circle-info"></i> Ainda não tenho uma conta. <a href="{{ url_for('clientes.register') }}">CRIAR CONTA.</a> 
+        </div>
+        <div id="recoverypasswdHelpBlock" class="form-text mb-4">
+             <a href="{{ url_for('clientes.register') }}"><i class="fa-solid fa-key"></i> Esqueci minha senha.</a>
         </div>
         <div class="row">
             <div class="col text-center">
