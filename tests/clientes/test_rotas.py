@@ -7,7 +7,7 @@ def test_request_home(client):
 def test_request_login(client):
     assert client.get("/login").status_code == 200
 
-def test_request_logout(client):
+def test_request_logout(app):
     ...
 
 def test_request_register(client):
