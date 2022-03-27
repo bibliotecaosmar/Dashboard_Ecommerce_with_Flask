@@ -22,6 +22,8 @@ def is_safe_url(target):
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 s = URLSafeTimedSerializer('secret')
+t = TimestampSigner('secret')
+
 
 @clientes.route('/login', methods=['GET', 'POST'])
 def login(): 
@@ -61,10 +63,12 @@ def register():
                 return redirect(url_for('clientes.register'))
     
             email = form.email.data
-            token = s.dumps(email, salt='email-confirm')
+            token = t.sign(email)
+            #token = s.dumps(email, salt='email-confirm')
             msg = Message('Confirm Email', sender='matheusoliveirasv@gmail.com', recipients=[email])
+            session['time'] = False
             link = url_for('clientes.confirm_email', token=token, _external=True)
-            msg.body = 'Seu link de confirmacao {}'.format(link)
+            msg.body = 'Seu link de confirmacao {}'.format(link) 
             mail.send(msg)
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
@@ -81,8 +85,12 @@ def register():
 @clientes.route('/confirm_email/<token>')
 def confirm_email(token):
     try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-        print(email)
+        if session['time'] == False:
+            email = t.unsign(token, max_age=3600)
+            session['time'] = True
+            #email = s.loads(token, salt='email-confirm', max_age=3600)
+        else:
+            email = t.unsign(token, max_age=5)
     except SignatureExpired:
         flash('Seu link de confirmação de email foi expirado.', 'erro')
         return redirect(url_for('clientes.register'))
@@ -92,6 +100,7 @@ def confirm_email(token):
 
     flash('Seu email foi confirmado.', 'sucesso')
     return redirect(url_for('clientes.login'))
+    
 
 @clientes.route('/logout')
 @login_required
