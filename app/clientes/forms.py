@@ -16,6 +16,5 @@ class RecoveryPasswordForm(FlaskForm):
     email = EmailField('email', validators=[DataRequired(message='Digite um email')])
 
 class ChangePasswordForm(FlaskForm):
-    email = HiddenField('email', validators=[DataRequired()])
     senha = PasswordField('senha', validators=[InputRequired(), EqualTo('confirma', message='Digite sua nova senha')])
     confirma = PasswordField('confirma', validators=[DataRequired(message='Confirme sua senha')])
