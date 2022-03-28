@@ -10,7 +10,7 @@ from itsdangerous import URLSafeTimedSerializer, TimestampSigner, SignatureExpir
 from app import mail
 from flask_mail import Message
 
-from app.clientes.forms import LoginForm, RegisterForm
+from app.clientes.forms import LoginForm, RegisterForm, RecoveryPasswordForm, ChangePasswordForm
 from app.clientes.models import Cliente
 from app.clientes.user_loader import load_user
 
@@ -76,7 +76,7 @@ def register():
             # db.session.add(cliente)
             # db.session.commit()
             # flash('Usuário cadastrado com sucesso.', 'sucesso')
-            return redirect(url_for('clientes.login'))
+            # return redirect(url_for('clientes.login'))
 
         return render_template('clientes/register.html', form=form)
 
@@ -101,6 +101,62 @@ def confirm_email(token):
     flash('Seu email foi confirmado.', 'sucesso')
     return redirect(url_for('clientes.login'))
     
+@clientes.route('/recuperar_senha', methods=['GET', 'POST'])
+def recuperar_senha():
+    if not current_user.is_authenticated:
+
+        form = RecoveryPasswordForm()
+        
+        if form.validate_on_submit():
+            cliente = Cliente.query.filter_by(email=form.email.data).first()
+            
+            if cliente:
+                email = form.email.data
+                # token = t.sign(email)
+                token = s.dumps(email, salt='recovery-password')
+                msg = Message('Confirm Email', sender='matheusoliveirasv@gmail.com', recipients=[email])
+                session['time_recovery_pwd'] = False
+                link = url_for('clientes.recovery_password', token=token, _external=True)
+                msg.body = 'Seu link de confirmacao {}'.format(link) 
+                mail.send(msg)
+                flash('Um link para alteração da sua senha foi envidado para seu email.', 'email')
+
+                return redirect(url_for('clientes.recuperar_senha'))
+
+            flash('Email não encontrado', 'erro')
+
+        return render_template('clientes/recuperar_senha.html', form=form)
+
+    return redirect(url_for('home.index'))
+
+@clientes.route('/recovery_password/<token>', methods=['GET', 'POST'])
+def recovery_password(token):
+    try:
+        if session['time_recovery_pwd'] == False:
+            email = s.loads(token, salt='recovery-password', max_age=3600)
+            # email = t.unsign(token, max_age=3600)
+            session['time_recovery_pwd'] = True
+        else:
+            # email = t.unsign(token, max_age=5)
+            email = s.loads(token, salt='recovery-password', max_age=300)
+    except SignatureExpired:
+        flash('Seu link de confirmação de email foi expirado.', 'erro')
+        return redirect(url_for('clientes.register'))
+    except BadSignature:
+        flash('Link de confirmação inválido.', 'erro')
+        return redirect(url_for('clientes.login'))
+    except KeyError:
+        return redirect(url_for('clientes.recuperar_senha'))
+    flash('Seu email foi confirmado.', 'sucesso')
+    #return redirect(url_for('clientes.login'))
+    form = ChangePasswordForm()
+ 
+    if form.validate_on_submit():
+        cliente = Cliente.query.filter_by(email=form.email.data)
+        cliente.senha = generate_password_hash(form.senha.data, method='sha256')
+        db.session.add(cliente)
+        db.session.commit()
+    return render_template('clientes/alterar_senha.html', email=email, form=form)
 
 @clientes.route('/logout')
 @login_required

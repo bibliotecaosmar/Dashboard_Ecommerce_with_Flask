@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, EmailField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, BooleanField, EmailField, HiddenField
+from wtforms.validators import DataRequired, InputRequired, EqualTo
 
 class LoginForm(FlaskForm):
     email = EmailField('email', validators=[DataRequired(message='Digite um email')])
@@ -12,3 +12,10 @@ class RegisterForm(FlaskForm):
     email = EmailField('email', validators=[DataRequired(message='Digite um email')])
     senha = PasswordField('senha', validators=[DataRequired(message='Digite uma senha')])
     
+class RecoveryPasswordForm(FlaskForm):
+    email = EmailField('email', validators=[DataRequired(message='Digite um email')])
+
+class ChangePasswordForm(FlaskForm):
+    email = HiddenField('email', validators=[DataRequired()])
+    senha = PasswordField('senha', validators=[InputRequired(), EqualTo('confirma', message='Digite sua nova senha')])
+    confirma = PasswordField('confirma', validators=[DataRequired(message='Confirme sua senha')])

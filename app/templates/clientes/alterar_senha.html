@@ -1,0 +1,69 @@
+{% extends '/bases/base_login.html' %}
+
+{% block title %}Alteração de Senha{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='clientes/login-register.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">ALTERAÇÃO DE SENHA</h2>
+    
+    <form class="form-login" action="" method="post">
+        {{ form.csrf_token }}
+
+        {% with erros = get_flashed_messages(category_filter=['erro']) %}
+            {% if erros %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="m-0 p-0 list-unstyled">
+                    {% for msg in erros %}
+                        <li><i class="fa-solid fa-circle-exclamation"></i> {{ msg }} </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-group mb-3">
+            {{ form.email(value=email) }}
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="senha" class="form-label"><i class="fa-solid fa-envelope"></i> Senha: </label>
+            {{ form.senha(class="form-control") }}
+
+            {% if form.senha.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for erro in form.senha.errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="confirma" class="form-label"><i class="fa-solid fa-envelope"></i> Confirmar Senha: </label>
+            {{ form.confirma(class="form-control") }}
+
+            {% if form.confirma.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for erro in form.confirma.errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="col text-center">
+                <button type="submit" class="btn btn-info btao text-center"><i class="fa-solid fa-user-plus fa-sm"></i> ENVIAR</button>
+            </div>
+        </div>
+    </form>
+    
+{% endblock %}

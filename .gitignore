@@ -224,7 +224,7 @@ $RECYCLE.BIN/
 migrations/
 
 # SQLite
-.db
+*.db
 
 # Cython
-.cpython-310.pyc
+*.cpython-310.pyc

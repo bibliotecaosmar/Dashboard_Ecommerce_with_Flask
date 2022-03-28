@@ -20,6 +20,3 @@ class Cliente(UserMixin, db.Model):
     
     def __repr__(self):
         return 'Cliente %r' % self.nome
-
-    def recovery_password():
-        pass
