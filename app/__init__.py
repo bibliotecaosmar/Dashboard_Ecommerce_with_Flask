@@ -26,7 +26,7 @@ lm.init_app(app)
 lm.login_view = 'clientes.login'
 
 csrf = CSRFProtect(app)
-
+#teste comentario
 # DATABASE-PRODUÇÃO
 # engine = create_engine('mysql://teste:teste1234@teste.tk/user1')
 # if not database_exists(engine.url):
