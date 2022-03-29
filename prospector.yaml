@@ -1,3 +1,6 @@
-ignore-path:
+ignore-paths:
+  - prospector.yaml
   - requirements.txt
   - migrations
+  - main.db
+  - config.py

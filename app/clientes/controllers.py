@@ -21,21 +21,21 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
+
 s = URLSafeTimedSerializer('secret')
 #t = TimestampSigner('secret')
 
 @clientes.route('/login', methods=['GET', 'POST'])
 def login(): 
     if not current_user.is_authenticated:
-
         form = LoginForm()
+
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
-            
-            if cliente and check_password_hash(cliente.senha, form.senha.data):
 
+            if cliente and check_password_hash(cliente.senha, form.senha.data):
                 login_user(cliente, remember=form.lembrar_me.data)
-                
+
                 if 'next' in session:
                     next = session['next']
                     if is_safe_url(next) and next is not None and next != '/logout':
@@ -46,6 +46,7 @@ def login():
             flash('Email ou senha incorreto.', 'erro')
 
         session['next'] = request.args.get('next')
+
         return render_template('clientes/login.html', form=form)
 
     return redirect(url_for('home.index'))
@@ -58,7 +59,8 @@ def register():
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
             if cliente:
-                flash(Markup('Email já cadastrado. Ir para <a href="{}">página de login.</a>'.format(url_for('clientes.login'))), 'erro')
+                url = url_for('clientes.login')
+                flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
                 return redirect(url_for('clientes.register'))
             
             session['nome'] = form.nome.data
@@ -69,7 +71,7 @@ def register():
             msg = Message('Confirmação de email', sender='matheusoliveirasv@gmail.com', recipients=[email])
             session['time_confirm_email'] = False
             link = url_for('clientes.confirm_email', token=token, _external=True)
-            msg.body = 'Seu link de confirmação: {}'.format(link) 
+            msg.body = f'Seu link de confirmação: {link}' 
             mail.send(msg)
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
@@ -121,7 +123,7 @@ def recuperar_senha():
                 msg = Message('Recuperação de conta', sender='matheusoliveirasv@gmail.com', recipients=[email])
                 session['time_recovery_pwd'] = False
                 link = url_for('clientes.recovery_password', token=token, _external=True)
-                msg.body = 'Seu link para alteração de senha: {}'.format(link) 
+                msg.body = f'Seu link para alteração de senha: {link}'
                 mail.send(msg)
                 flash('Um link para alteração da sua senha foi enviado para seu email.', 'email')
 

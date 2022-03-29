@@ -20,4 +20,4 @@ class Cliente(UserMixin, db.Model):
         self.status = status
     
     def __repr__(self):
-        return 'Cliente %r' % self.nome
+        return f'Cliente {self.nome}'

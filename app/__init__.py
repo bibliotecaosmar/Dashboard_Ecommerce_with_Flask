@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -33,7 +33,7 @@ csrf = CSRFProtect(app)
 #     create_database(engine.url, encoding='utf8mb4')
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found():
     return render_template('404.html'), 404
 
 # IMPORTA TODOS OS BLUEPRINT
