@@ -37,9 +37,11 @@
             {% endif %}
         {% endwith %}
 
-        <div class="form-group mb-3">
-            <label for="nome" class="form-label"><i class="fa-solid fa-circle-user"></i> Nome: </label>
-            {{ form.nome(class="form-control") }}
+        <div class="form-floating mb-3">
+            <!-- <label for="nome" class="form-label"><i class="fa-solid fa-circle-user"></i> Nome: </label>
+            {{ form.nome(class="form-control") }} -->
+            {{ form.nome(class="form-control", id="nomeInput", placeholder="Nome") }}
+            <label for="nomeInput">Nome</label>
 
             {% if form.nome.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -52,9 +54,9 @@
             {% endif %}
         </div>
 
-        <div class="form-group mb-3">
-            <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i> Email: </label>
-            {{ form.email(class="form-control") }}
+        <div class="form-floating mb-3">
+            {{ form.email(class="form-control", id="emailInput", placeholder="email@exemplo.com") }}
+            <label for="emailInput">Email</label>
 
             {% if form.email.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -67,9 +69,9 @@
             {% endif %}
         </div>
 
-        <div class="form-group mb-2">
-            <label for="senha" class="form-label"><i class="fa-solid fa-lock"></i> Senha: </label>
-            {{ form.senha(class="form-control") }}
+        <div class="form-floating mb-3">
+            {{ form.senha(class="form-control", id="senhaInput", placeholder="Senha") }}
+            <label for="senhaInput">Senha</label>
 
             {% if form.senha.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -81,7 +83,21 @@
                 </div>
             {% endif %}
         </div>
+        <div class="form-floating mb-3">
+            {{ form.confirma(class="form-control", id="confirmaInput", placeholder="Confirmar Senha") }}
+            <label for="confirmaInput">Confirmar Senha</label>
 
+            {% if form.confirma.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for erro in form.confirma.errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        
         <div id="loginHelpBlock" class="form-text mb-4">
             <i class="fa-solid fa-circle-info"></i> Já tenho uma conta. <a href="{{ url_for('clientes.login') }}">FAZER LOGIN.</a>
         </div>

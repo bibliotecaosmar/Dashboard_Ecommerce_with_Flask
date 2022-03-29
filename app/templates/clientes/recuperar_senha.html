@@ -1,6 +1,6 @@
 {% extends '/bases/base_login.html' %}
 
-{% block title %}Recuperação de Senha{% endblock %}
+{% block title %}Recuperar Senha{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='clientes/login-register.css') }}">
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAÇÃO DE SENHA</h2>
+    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAR SENHA</h2>
     
     <form class="form-login" action="" method="post">
         {{ form.csrf_token }}
@@ -37,9 +37,9 @@
             {% endif %}
         {% endwith %}
 
-        <div class="form-group mb-3">
-            <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i> Email: </label>
-            {{ form.email(class="form-control") }}
+        <div class="form-floating mb-3">
+            {{ form.email(class="form-control", id="emailInput", placeholder="name@example.com") }}  
+            <label for="emailInput">Email</label>
 
             {% if form.email.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -49,12 +49,12 @@
                         {% endfor %}
                     </ul>
                 </div>
-            {% endif %}
+            {% endif %}     
         </div>
 
         <div class="row">
             <div class="col text-center">
-                <button type="submit" class="btn btn-info btao text-center"><i class="fa-solid fa-user-plus fa-sm"></i> ENVIAR</button>
+                <button type="submit" class="btn btn-info btao text-center"><i class="fa-solid fa-envelope fa-sm"></i> ENVIAR</button>
             </div>
         </div>
     </form>

@@ -83,5 +83,10 @@ body{
     background-color: #69ffbb;
     border-color: #69ffbb;
 }
+.alert-warning {
+    color: #664d03;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
 /* FIM ALERTAS */
 

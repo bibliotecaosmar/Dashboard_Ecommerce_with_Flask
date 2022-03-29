@@ -9,6 +9,7 @@ class Cliente(UserMixin, db.Model):
     email = db.Column(db.String(80), unique=True, nullable=False)
     senha = db.Column(db.String(120), nullable=False)
     status = db.Column(db.Boolean, nullable=False)
+    foto_perfil = db.Column(db.LargeBinary)
     data_criacao = db.Column(db.DateTime, default=db.func.current_timestamp())
     data_modificacao = db.Column(db.DateTime, default=db.func.current_timestamp())
 

@@ -49,9 +49,9 @@
             {% endif %}
         {% endwith %}
 
-        <div class="form-group mb-3">
-            <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i> Email: </label>
-            {{ form.email(class="form-control") }}
+        <div class="form-floating mb-3">
+            {{ form.email(class="form-control", id="emailInput", placeholder="name@example.com") }}  
+            <label for="emailInput">Email</label>
 
             {% if form.email.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -64,9 +64,9 @@
             {% endif %}
         </div>
 
-        <div class="form-group mb-2">
-            <label for="senha" class="form-label"><i class="fa-solid fa-lock"></i> Senha: </label>
-            {{ form.senha(class="form-control") }}
+        <div class="form-floating mb-2">
+            {{ form.senha(class="form-control", id="senhaInput", placeholder="Senha") }}
+            <label for="senhaInput" >Senha</label>
 
             {% if form.senha.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -79,17 +79,24 @@
             {% endif %}
         </div>
 
-        <div class="mb-3 form-check">
-            {{ form.lembrar_me(class="form-check-input", id="lembrar_me") }}   
-            <label class="form-check-label" for="lembrar_me">Lembrar-me</label>
+        <div class="row">
+            <div class="col">
+                <div class="mb-2 form-check">
+                    {{ form.lembrar_me(class="form-check-input", id="lembrar_me") }}   
+                    <label class="form-check-label" for="lembrar_me">Lembrar-me</label>
+                </div>
+            </div>
+            <div class="col">
+                <div id="recoverypasswdHelpBlock" class="form-text mb-2 text-end">
+                    <a href="{{ url_for('clientes.recuperar_senha') }}"><i class="fa-solid fa-key"></i> Esqueci minha senha.</a>
+               </div>
+            </div>     
         </div>
-
-        <div id="registerHelpBlock" class="form-text mb-2">
+        
+        <div id="registerHelpBlock" class="form-text mb-4">
             <i class="fa-solid fa-circle-info"></i> Ainda não tenho uma conta. <a href="{{ url_for('clientes.register') }}">CRIAR CONTA.</a> 
         </div>
-        <div id="recoverypasswdHelpBlock" class="form-text mb-4">
-             <a href="{{ url_for('clientes.recuperar_senha') }}"><i class="fa-solid fa-key"></i> Esqueci minha senha.</a>
-        </div>
+        
         <div class="row">
             <div class="col text-center">
                 <button type="submit" class="btn btn-info btao text-center"><i class="fa-solid fa-right-to-bracket me-1"></i>ENTRAR</button>

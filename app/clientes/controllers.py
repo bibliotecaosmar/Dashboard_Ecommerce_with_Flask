@@ -62,15 +62,14 @@ def register():
                 return redirect(url_for('clientes.register'))
             
             session['nome'] = form.nome.data
-            session['senha'] = generate_password_hash(form.senha.data, method='sha256')
-
+            session['senha'] = generate_password_hash(form.senha.data, method='sha256')   
             email = form.email.data
             # token = t.sign(email)
             token = s.dumps(email, salt='email-confirm')
-            msg = Message('Confirm Email', sender='matheusoliveirasv@gmail.com', recipients=[email])
+            msg = Message('Confirmação de email', sender='matheusoliveirasv@gmail.com', recipients=[email])
             session['time_confirm_email'] = False
             link = url_for('clientes.confirm_email', token=token, _external=True)
-            msg.body = 'Seu link de confirmacao {}'.format(link) 
+            msg.body = 'Seu link de confirmação: {}'.format(link) 
             mail.send(msg)
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
@@ -91,7 +90,7 @@ def confirm_email(token):
             email = s.loads(token, salt='email-confirm', max_age=5)
             #email = t.unsign(token, max_age=5)
     except SignatureExpired:
-        flash('Link de confirmação de email foi expirado.', 'erro')
+        flash('Link de confirmação de email expirado.', 'erro')
         return redirect(url_for('clientes.register'))
     except BadSignature:
         flash('Link de confirmação inválido.', 'erro')
@@ -117,14 +116,14 @@ def recuperar_senha():
             
             if cliente:
                 email = form.email.data
-                # token = t.sign(email)
+                #token = t.sign(email)
                 token = s.dumps(email, salt='recovery-password')
-                msg = Message('Confirm Email', sender='matheusoliveirasv@gmail.com', recipients=[email])
+                msg = Message('Recuperação de conta', sender='matheusoliveirasv@gmail.com', recipients=[email])
                 session['time_recovery_pwd'] = False
                 link = url_for('clientes.recovery_password', token=token, _external=True)
-                msg.body = 'Seu link de confirmacao {}'.format(link) 
+                msg.body = 'Seu link para alteração de senha: {}'.format(link) 
                 mail.send(msg)
-                flash('Um link para alteração da sua senha foi envidado para seu email.', 'email')
+                flash('Um link para alteração da sua senha foi enviado para seu email.', 'email')
 
                 return redirect(url_for('clientes.recuperar_senha'))
 
