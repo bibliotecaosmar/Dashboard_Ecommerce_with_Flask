@@ -19,7 +19,7 @@ REMEMBER_COOKIE_DURATION = timedelta(days=7)
 #CSRF_ENABLED = True
 #CSRF_SESSION_KEY = 'secret'
 
-SECRET_KEY = secret_key
+SECRET_KEY = 'teste'
 
 
 # Email Configuration
