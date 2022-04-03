@@ -58,9 +58,12 @@ def register():
 
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
-            if cliente:
+            if cliente and cliente.confirmado:
                 flash(Markup('Email já cadastrado. Ir para <a href="{}">página de login.</a>'.format(url_for('clientes.login'))), 'erro')
                 return redirect(url_for('clientes.register'))
+            if cliente and not cliente.confirmado:
+                db.session.delete(cliente)
+                db.session.commit()
 
             nome = form.nome.data
             email = form.email.data
@@ -77,7 +80,6 @@ def register():
             link = url_for('clientes.confirm_email', token=token, _external=True)
             msg.body = 'Seu link de confirmação: {}'.format(link) 
             mail.send(msg)
-            flash('Usuário cadastrado com sucesso.', 'sucesso')
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
             return redirect(url_for('clientes.login'))
@@ -107,6 +109,7 @@ def confirm_email(token):
         cliente.data_modificacao = datetime.datetime.now()
         db.session.commit()
         flash('Seu email foi confirmado.', 'sucesso')
+        flash('Cadastro concluído com sucesso.', 'sucesso')
     # flash('Usuário cadastrado com sucesso.', 'sucesso')
     return redirect(url_for('clientes.login'))
     
