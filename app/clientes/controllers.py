@@ -7,9 +7,9 @@ from app import db
 
 # Confirmação de email
 from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token
+from app.clientes.token_recovery_password import generate_recovery_token, recovery_token
+from app.clientes.send_email import send_email
 from itsdangerous import URLSafeTimedSerializer, TimestampSigner, SignatureExpired, BadSignature
-from app import mail
-from flask_mail import Message
 import datetime
 
 from app.clientes.forms import LoginForm, RegisterForm, RecoveryPasswordForm, ChangePasswordForm
@@ -74,12 +74,12 @@ def register():
             db.session.commit()
 
             token = generate_confirmation_token(email)
-           
-            msg = Message('Confirmação de email', sender='matheusoliveirasv@gmail.com', recipients=[email])
-            session['time_confirm_email'] = False
             link = url_for('clientes.confirm_email', token=token, _external=True)
-            msg.body = 'Seu link de confirmação: {}'.format(link) 
-            mail.send(msg)
+            session['time_confirm_email'] = False
+
+            send_email(title = 'Confirmação de email', email = email,
+            msg_body = f'Seu link de confirmação: {link}')
+           
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
             return redirect(url_for('clientes.login'))
@@ -124,13 +124,14 @@ def recuperar_senha():
             
             if cliente:
                 email = form.email.data
-                #token = t.sign(email)
-                token = s.dumps(email, salt='recovery-password')
-                msg = Message('Recuperação de conta', sender='matheusoliveirasv@gmail.com', recipients=[email])
-                session['time_recovery_pwd'] = False
+                
+                token = generate_recovery_token(email)
                 link = url_for('clientes.recovery_password', token=token, _external=True)
-                msg.body = 'Seu link para alteração de senha: {}'.format(link) 
-                mail.send(msg)
+                session['time_recovery_pwd'] = False
+
+                send_email(title = 'Recuperação de conta', email = email,
+                msg_body = f'Seu link para alterar senha: {link}')
+
                 flash('Um link para alteração da sua senha foi enviado para seu email.', 'email')
 
                 return redirect(url_for('clientes.recuperar_senha'))
@@ -144,11 +145,7 @@ def recuperar_senha():
 @clientes.route('/recovery_password/<token>', methods=['GET', 'POST'])
 def recovery_password(token):
     try:
-        if session['time_recovery_pwd'] == False:
-            email = s.loads(token, salt='recovery-password', max_age=3600)
-            session['time_recovery_pwd'] = True
-        else:
-            email = s.loads(token, salt='recovery-password', max_age=300)
+        email = recovery_token(token)
     except SignatureExpired:
         flash('Seu link de recuperação de senha foi expirado.', 'erro')
         return redirect(url_for('clientes.recuperar_senha'))
