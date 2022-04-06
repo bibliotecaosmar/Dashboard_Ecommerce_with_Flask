@@ -1,6 +1,6 @@
 {% extends '/bases/base_login.html' %}
 
-{% block title %}Recuperar Senha{% endblock %}
+{% block title %}Recuperar Conta{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='clientes/login-register.css') }}">
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAR SENHA</h2>
+    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAR CONTA</h2>
     
     <form class="form-login" action="" method="post">
         {{ form.csrf_token }}

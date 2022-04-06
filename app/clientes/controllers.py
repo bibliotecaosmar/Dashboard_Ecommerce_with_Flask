@@ -7,7 +7,7 @@ from app import db
 
 # Confirmação de email
 from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token
-from app.clientes.token_recovery_password import generate_recovery_token, recovery_token
+from app.clientes.token_recovery_account import generate_recovery_token, recovery_token
 from app.clientes.send_email import send_email
 from itsdangerous import URLSafeTimedSerializer, TimestampSigner, SignatureExpired, BadSignature
 import datetime
@@ -34,16 +34,17 @@ def login():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
             
             if cliente and check_password_hash(cliente.senha, form.senha.data):
+                if cliente.confirmado:
+                    login_user(cliente, remember=form.lembrar_me.data)
+                    if 'next' in session:
+                        next = session['next']
+                        if is_safe_url(next) and next is not None and next != '/logout':
+                            return redirect(next)
+                    #flash('Bem-vindo %s' % cliente.nome)
+                    return redirect(url_for('home.index'))
 
-                login_user(cliente, remember=form.lembrar_me.data)
-                
-                if 'next' in session:
-                    next = session['next']
-                    if is_safe_url(next) and next is not None and next != '/logout':
-                        return redirect(next)
-                #flash('Bem-vindo %s' % cliente.nome)
-                return redirect(url_for('home.index'))
-
+                flash('Seu email ainda não foi confirmado.', 'email')
+                return redirect(url_for('clientes.login'))         
             flash('Email ou senha incorreto.', 'erro')
 
         session['next'] = request.args.get('next')
@@ -59,7 +60,8 @@ def register():
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
             if cliente and cliente.confirmado:
-                flash(Markup('Email já cadastrado. Ir para <a href="{}">página de login.</a>'.format(url_for('clientes.login'))), 'erro')
+                url = url_for('clientes.login')
+                flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
                 return redirect(url_for('clientes.register'))
             if cliente and not cliente.confirmado:
                 db.session.delete(cliente)
@@ -75,10 +77,12 @@ def register():
 
             token = generate_confirmation_token(email)
             link = url_for('clientes.confirm_email', token=token, _external=True)
+            html = render_template('clientes/confirm_email.html', link=link)
+            subject = 'Confirmação de email'
+
             session['time_confirm_email'] = False
 
-            send_email(title = 'Confirmação de email', email = email,
-            msg_body = f'Seu link de confirmação: {link}')
+            send_email(subject, email, html)
            
             flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
 
@@ -113,8 +117,8 @@ def confirm_email(token):
     # flash('Usuário cadastrado com sucesso.', 'sucesso')
     return redirect(url_for('clientes.login'))
     
-@clientes.route('/recuperar_senha', methods=['GET', 'POST'])
-def recuperar_senha():
+@clientes.route('/recuperar_conta', methods=['GET', 'POST'])
+def recuperar_conta():
     if not current_user.is_authenticated:
 
         form = RecoveryPasswordForm()
@@ -126,34 +130,36 @@ def recuperar_senha():
                 email = form.email.data
                 
                 token = generate_recovery_token(email)
-                link = url_for('clientes.recovery_password', token=token, _external=True)
+                link = url_for('clientes.recovery_account', token=token, _external=True)
+                html = render_template('clientes/recovery_account.html', link=link)
+                subject = 'Recuperação de conta'
+
                 session['time_recovery_pwd'] = False
 
-                send_email(title = 'Recuperação de conta', email = email,
-                msg_body = f'Seu link para alterar senha: {link}')
+                send_email(subject, email, html)
 
                 flash('Um link para alteração da sua senha foi enviado para seu email.', 'email')
 
-                return redirect(url_for('clientes.recuperar_senha'))
+                return redirect(url_for('clientes.recuperar_conta'))
 
             flash('Email não encontrado', 'erro')
 
-        return render_template('clientes/recuperar_senha.html', form=form)
+        return render_template('clientes/recuperar_conta.html', form=form)
 
     return redirect(url_for('home.index'))
 
-@clientes.route('/recovery_password/<token>', methods=['GET', 'POST'])
-def recovery_password(token):
+@clientes.route('/recovery_account/<token>', methods=['GET', 'POST'])
+def recovery_account(token):
     try:
         email = recovery_token(token)
     except SignatureExpired:
-        flash('Seu link de recuperação de senha foi expirado.', 'erro')
-        return redirect(url_for('clientes.recuperar_senha'))
+        flash('Seu link de recuperação de conta foi expirado.', 'erro')
+        return redirect(url_for('clientes.recuperar_conta'))
     except BadSignature:
-        flash('Link de recuperação de senha inválido.', 'erro')
-        return redirect(url_for('clientes.recuperar_senha'))
+        flash('Link de recuperação de conta inválido.', 'erro')
+        return redirect(url_for('clientes.recuperar_conta'))
     except KeyError:
-        return redirect(url_for('clientes.recuperar_senha'))
+        return redirect(url_for('clientes.recuperar_conta'))
     
     form = ChangePasswordForm()
 
