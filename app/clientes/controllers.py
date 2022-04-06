@@ -59,11 +59,11 @@ def register():
 
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
-            if cliente and cliente.confirmado:
-                url = url_for('clientes.login')
-                flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
-                return redirect(url_for('clientes.register'))
-            if cliente and not cliente.confirmado:
+            if cliente:
+                if cliente.confirmado:
+                    url = url_for('clientes.login')
+                    flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
+                    return redirect(url_for('clientes.register'))     
                 db.session.delete(cliente)
                 db.session.commit()
 
