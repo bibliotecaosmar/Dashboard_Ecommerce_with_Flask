@@ -20,7 +20,7 @@ class Cliente(UserMixin, db.Model):
         self.senha = senha
     
     def __repr__(self):
-        return 'Cliente %r' % self.nome
+        return f'Cliente {self.nome}'
 
 # class ConfirmEmail(db.Model):
 #     __tablename__ = 'confirmacao_email'

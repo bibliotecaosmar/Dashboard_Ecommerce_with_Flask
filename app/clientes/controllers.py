@@ -9,7 +9,7 @@ from app import db
 from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token
 from app.clientes.token_recovery_account import generate_recovery_token, recovery_token
 from app.clientes.send_email import send_email
-from itsdangerous import URLSafeTimedSerializer, TimestampSigner, SignatureExpired, BadSignature
+from itsdangerous import SignatureExpired, BadSignature
 import datetime
 
 from app.clientes.forms import LoginForm, RegisterForm, RecoveryPasswordForm, ChangePasswordForm
@@ -22,8 +22,6 @@ def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
-
-s = URLSafeTimedSerializer('secret')
 
 @clientes.route('/login', methods=['GET', 'POST'])
 def login(): 
