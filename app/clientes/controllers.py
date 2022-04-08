@@ -6,14 +6,14 @@ from urllib.parse import urlparse, urljoin
 from app import db
 
 # Confirmação de email
-from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token
+from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token, decode_token
 from app.clientes.token_recovery_account import generate_recovery_token, recovery_token
 from app.clientes.send_email import send_email
 from itsdangerous import SignatureExpired, BadSignature
 import datetime
 
 from app.clientes.forms import LoginForm, RegisterForm, RecoveryPasswordForm, ChangePasswordForm
-from app.clientes.models import Cliente
+from app.clientes.models import Cliente, ConfirmEmail
 from app.clientes.user_loader import load_user
 
 clientes = Blueprint('clientes', __name__)
@@ -78,7 +78,11 @@ def register():
             html = render_template('clientes/confirm_email.html', link=link)
             subject = 'Confirmação de email'
 
-            session['time_confirm_email'] = False
+            # session['time_confirm_email'] = False
+
+            confirm = ConfirmEmail(token, 3600, cliente.id)
+            db.session.add(confirm)
+            db.session.commit()
 
             send_email(subject, email, html)
            
@@ -93,7 +97,16 @@ def register():
 @clientes.route('/confirm_email/<token>')
 def confirm_email(token):
     try:
-        email = confirm_token(token)
+        email = decode_token(token)
+        cliente = Cliente.query.filter_by(email=email).first()
+        confirm = ConfirmEmail.query.filter_by(cliente_id=cliente.id).first()
+
+        expiration = confirm.expiration
+        expired = confirm.expired
+        
+        expired = confirm_token(token, expiration, expired)
+        confirm.expired = expired
+        db.session.commit()
     except SignatureExpired:
         flash('Link de confirmação de email expirado.', 'erro')
         return redirect(url_for('clientes.register'))
@@ -103,7 +116,7 @@ def confirm_email(token):
     except KeyError:
         return redirect(url_for('clientes.register'))
  
-    cliente = Cliente.query.filter_by(email=email).first()
+    # cliente = Cliente.query.filter_by(email=email).first()
     if cliente.confirmado:
         flash('Email já confirmado. Por favor faça o login', 'sucesso')
     else:
