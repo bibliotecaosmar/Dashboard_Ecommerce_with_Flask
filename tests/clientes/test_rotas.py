@@ -7,8 +7,20 @@ def test_request_home(client):
 def test_request_login(client):
     assert client.get("/login").status_code == 200
 
-def test_request_logout(app):
-    ...
+# def test_request_logout(client):
+#     ...
 
 def test_request_register(client):
     assert client.get("/register").status_code == 200
+
+# def test_request_confirm_email(client):
+#     ...
+
+def test_request_recuperar_conta(client):
+    assert client.get("/recuperar_conta").status_code == 200
+
+# def test_request_recovery_account(client):
+#     ...
+
+def test_request_url_not_exists(client):
+    assert client.get("/url_not_exists").status_code == 404

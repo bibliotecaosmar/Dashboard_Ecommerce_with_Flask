@@ -5,13 +5,15 @@ from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import create_engine
 from sqlalchemy_utils import create_database, database_exists
 
+from app.home.controller import home
+from app.clientes.controllers import clientes
+
 
 def create_app():
-    from app.model import db
+    from app.database import db
     from app.login_manager import lm
+    from app.mail import mail
 
-    from app.home.controller import home
-    from app.clientes.controllers import clientes
     
     # Objeto da aplicação flask
     app = Flask(__name__)
@@ -26,6 +28,8 @@ def create_app():
 
     lm.init_app(app)
     lm.login_view = 'clientes.login'
+
+    mail.init_app(app)
 
     csrf = CSRFProtect(app)
 

@@ -19,4 +19,13 @@ REMEMBER_COOKIE_DURATION = timedelta(days=7)
 #CSRF_ENABLED = True
 #CSRF_SESSION_KEY = 'secret'
 
-SECRET_KEY = secret_key
+SECRET_KEY = 'teste'
+
+
+# Email Configuration
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_USERNAME = 'matheusoliveirasv@gmail.com'
+MAIL_PASSWORD = 'mosv6907'
+MAIL_PORT = 465
+MAIL_USE_SSL = True
+MAIL_USE_TLS = False

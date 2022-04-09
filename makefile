@@ -3,6 +3,14 @@
 install:
 	@poetry install
 
+run:
+	@poetry run python run.py
+
+migrate:
+	@poetry run flask db init
+	@poetry run flask db migrate
+	@poetry run flask db upgrade
+
 init:
 	@poetry add --dev prospector
 	@poetry add --dev pip-audit

@@ -1,11 +1,18 @@
-from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
+from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, Markup
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
-from app.model import db
+from app.database import db
 
-from app.clientes.forms import LoginForm, RegisterForm
+# Confirmação de email
+from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token
+from app.clientes.token_recovery_account import generate_recovery_token, recovery_token
+from app.clientes.send_email import send_email
+from itsdangerous import SignatureExpired, BadSignature
+import datetime
+
+from app.clientes.forms import LoginForm, RegisterForm, RecoveryPasswordForm, ChangePasswordForm
 from app.clientes.models import Cliente
 from app.clientes.user_loader import load_user
 
@@ -25,16 +32,17 @@ def login():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
             
             if cliente and check_password_hash(cliente.senha, form.senha.data):
+                if cliente.confirmado:
+                    login_user(cliente, remember=form.lembrar_me.data)
+                    if 'next' in session:
+                        next = session['next']
+                        if is_safe_url(next) and next is not None and next != '/logout':
+                            return redirect(next)
+                    #flash('Bem-vindo %s' % cliente.nome)
+                    return redirect(url_for('home.index'))
 
-                login_user(cliente, remember=form.lembrar_me.data)
-                
-                if 'next' in session:
-                    next = session['next']
-                    if is_safe_url(next) and next is not None and next != '/logout':
-                        return redirect(next)
-                #flash('Bem-vindo %s' % cliente.nome)
-                return redirect(url_for('home.index'))
-
+                flash('Seu email ainda não foi confirmado.', 'email')
+                return redirect(url_for('clientes.login'))         
             flash('Email ou senha incorreto.', 'erro')
 
         session['next'] = request.args.get('next')
@@ -48,23 +56,118 @@ def register():
         form = RegisterForm()
 
         if form.validate_on_submit():
-
             cliente = Cliente.query.filter_by(email=form.email.data).first()
-
             if cliente:
-                flash('Email já cadastrado', 'erro')
-                return redirect(url_for('clientes.register'))
+                if cliente.confirmado:
+                    url = url_for('clientes.login')
+                    flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
+                    return redirect(url_for('clientes.register'))     
+                db.session.delete(cliente)
+                db.session.commit()
 
-            cliente = Cliente(form.nome.data, form.email.data, generate_password_hash(form.senha.data, method='sha256'), 1)
+            nome = form.nome.data
+            email = form.email.data
+            senha = generate_password_hash(form.senha.data, method='sha256')
 
+            cliente = Cliente(nome, email, senha)
             db.session.add(cliente)
             db.session.commit()
-            flash('Usuário cadastrado com sucesso.', 'sucesso')
+
+            token = generate_confirmation_token(email)
+            link = url_for('clientes.confirm_email', token=token, _external=True)
+            html = render_template('clientes/confirm_email.html', link=link)
+            subject = 'Confirmação de email'
+
+            session['time_confirm_email'] = False
+
+            send_email(subject, email, html)
+           
+            flash('Um link de confirmação foi enviado para seu email. Confirme para ter acesso a sua conta.', 'email')
+
             return redirect(url_for('clientes.login'))
 
         return render_template('clientes/register.html', form=form)
 
     return redirect(url_for('home.index'))
+
+@clientes.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except SignatureExpired:
+        flash('Link de confirmação de email expirado.', 'erro')
+        return redirect(url_for('clientes.register'))
+    except BadSignature:
+        flash('Link de confirmação inválido.', 'erro')
+        return redirect(url_for('clientes.login'))
+    except KeyError:
+        return redirect(url_for('clientes.register'))
+ 
+    cliente = Cliente.query.filter_by(email=email).first()
+    if cliente.confirmado:
+        flash('Email já confirmado. Por favor faça o login', 'sucesso')
+    else:
+        cliente.confirmado = True
+        cliente.data_modificacao = datetime.datetime.now()
+        db.session.commit()
+        flash('Seu email foi confirmado.', 'sucesso')
+        flash('Cadastro concluído com sucesso.', 'sucesso')
+    # flash('Usuário cadastrado com sucesso.', 'sucesso')
+    return redirect(url_for('clientes.login'))
+    
+@clientes.route('/recuperar_conta', methods=['GET', 'POST'])
+def recuperar_conta():
+    if not current_user.is_authenticated:
+
+        form = RecoveryPasswordForm()
+        
+        if form.validate_on_submit():
+            cliente = Cliente.query.filter_by(email=form.email.data).first()
+            
+            if cliente:
+                email = form.email.data
+                
+                token = generate_recovery_token(email)
+                link = url_for('clientes.recovery_account', token=token, _external=True)
+                html = render_template('clientes/recovery_account.html', link=link)
+                subject = 'Recuperação de conta'
+
+                session['time_recovery_pwd'] = False
+
+                send_email(subject, email, html)
+
+                flash('Um link para alteração da sua senha foi enviado para seu email.', 'email')
+
+                return redirect(url_for('clientes.recuperar_conta'))
+
+            flash('Email não encontrado', 'erro')
+
+        return render_template('clientes/recuperar_conta.html', form=form)
+
+    return redirect(url_for('home.index'))
+
+@clientes.route('/recovery_account/<token>', methods=['GET', 'POST'])
+def recovery_account(token):
+    try:
+        email = recovery_token(token)
+    except SignatureExpired:
+        flash('Seu link de recuperação de conta foi expirado.', 'erro')
+        return redirect(url_for('clientes.recuperar_conta'))
+    except BadSignature:
+        flash('Link de recuperação de conta inválido.', 'erro')
+        return redirect(url_for('clientes.recuperar_conta'))
+    except KeyError:
+        return redirect(url_for('clientes.recuperar_conta'))
+    
+    form = ChangePasswordForm()
+
+    cliente = Cliente.query.filter_by(email=email).first()
+    if form.validate_on_submit():
+        cliente.senha = generate_password_hash(form.senha.data, method='sha256')
+        db.session.commit()
+        flash('Sua senha foi alterada!', 'sucesso')
+        return redirect(url_for('clientes.login'))
+    return render_template('clientes/alterar_senha.html', email=email, form=form)
 
 @clientes.route('/logout')
 @login_required
