@@ -7,15 +7,15 @@ def generate_confirmation_token(email):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     return s.dumps(email, salt='email-confirm')
 
-def confirm_token(token, expiration, expired):
+def confirm_token(token, expiration, active):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    if expired:
+    if active:
         email = s.loads(token, salt='email-confirm', max_age=expiration)
-        expired = False   
+        active = False   
     else:
         email = s.loads(token, salt='email-confirm', max_age=0)
-    return expired
+    return active
 
-def decode_token(token):
+def decode_confirmation_token(token):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     return s.loads(token, salt='email-confirm')

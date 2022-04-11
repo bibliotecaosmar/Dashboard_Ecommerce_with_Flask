@@ -5,13 +5,20 @@ from app import app
 
 def generate_recovery_token(email):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return s.dumps(email, salt='recovery-password')
+    return s.dumps(email, salt='recovery-account')
 
 def recovery_token(token, expiration=3600):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    if session['time_recovery_pwd'] == False:
-        email = s.loads(token, salt='recovery-password', max_age=expiration)
-        session['time_recovery_pwd'] = True
+    if not password_modified:
+        if active:
+            email = s.loads(token, salt='recovery-account', max_age=expiration)
+            active = False
+        else:
+            email = s.loads(token, salt='recovery-account', max_age=300)
+        return email
     else:
-        email = s.loads(token, salt='recovery-password', max_age=300)
-    return email
+        return s.loads(token, salt='recovery-account', max_age=0)
+
+def decode_recovery_token(token):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return s.loads(token, salt='recovery-account')

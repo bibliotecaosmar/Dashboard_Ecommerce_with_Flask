@@ -30,7 +30,7 @@ class ConfirmEmail(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(80), nullable=False)
     expiration = db.Column(db.Integer, nullable=False)
-    expired = db.Column(db.Boolean, nullable=False, default=True)
+    active = db.Column(db.Boolean, nullable=False, default=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
 
     def __init__(self, token, expiration, cliente_id):

@@ -6,8 +6,8 @@ from urllib.parse import urlparse, urljoin
 from app import db
 
 # Confirmação de email
-from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token, decode_token
-from app.clientes.token_recovery_account import generate_recovery_token, recovery_token
+from app.clientes.token_confirm_email import generate_confirmation_token, confirm_token, decode_confirmation_token
+from app.clientes.token_recovery_account import generate_recovery_token, recovery_token, decode_recovery_token
 from app.clientes.send_email import send_email
 from itsdangerous import SignatureExpired, BadSignature
 import datetime
@@ -97,15 +97,15 @@ def register():
 @clientes.route('/confirm_email/<token>')
 def confirm_email(token):
     try:
-        email = decode_token(token)
+        email = decode_confirmation_token(token)
         cliente = Cliente.query.filter_by(email=email).first()
         confirm = ConfirmEmail.query.filter_by(cliente_id=cliente.id).first()
 
         expiration = confirm.expiration
-        expired = confirm.expired
+        active = confirm.active
         
-        expired = confirm_token(token, expiration, expired)
-        confirm.expired = expired
+        active = confirm_token(token, expiration, active)
+        confirm.active = active
         db.session.commit()
     except SignatureExpired:
         flash('Link de confirmação de email expirado.', 'erro')
