@@ -57,14 +57,20 @@ def register():
 
         if form.validate_on_submit():
             cliente = Cliente.query.filter_by(email=form.email.data).first()
+
             if cliente:
                 if cliente.confirmado:
                     url = url_for('clientes.login')
                     flash(Markup(f'Email já cadastrado. Ir para <a href="{url}">página de login.</a>'), 'erro')
-                    return redirect(url_for('clientes.register'))     
+                    return redirect(url_for('clientes.register')) 
+
+                confirm = ConfirmEmail.query.filter_by(cliente_id=cliente.id).first()
+                if confirm:
+                    db.session.delete(confirm)
+                    db.session.commit()
                 db.session.delete(cliente)
                 db.session.commit()
-
+                
             nome = form.nome.data
             email = form.email.data
             senha = generate_password_hash(form.senha.data, method='sha256')
@@ -78,9 +84,7 @@ def register():
             html = render_template('clientes/confirm_email.html', link=link)
             subject = 'Confirmação de email'
 
-            # session['time_confirm_email'] = False
-
-            confirm = ConfirmEmail(token, 3600, cliente.id)
+            confirm = ConfirmEmail(cliente.id)
             db.session.add(confirm)
             db.session.commit()
 
@@ -135,15 +139,15 @@ def recuperar_conta():
         form = RecoveryPasswordForm()
         
         if form.validate_on_submit():
-            cliente = Cliente.query.filter_by(email=form.email.data).first()
-            recovery = RecoveryAccount.query.filter_by(cliente_id=cliente.id).first()
-
-            # Reseta qualquer token de recuperação no db se existir
-            if recovery:
-                db.session.delete(recovery)
-                db.session.commit()
-            
+            cliente = Cliente.query.filter_by(email=form.email.data).first()   
+                  
             if cliente:
+                # Reseta qualquer token de recuperação no db se existir
+                recovery = RecoveryAccount.query.filter_by(cliente_id=cliente.id).first()
+                if recovery:
+                    db.session.delete(recovery)
+                    db.session.commit()
+
                 email = form.email.data
                 
                 token = generate_recovery_token(email)
@@ -151,7 +155,7 @@ def recuperar_conta():
                 html = render_template('clientes/recovery_account.html', link=link)
                 subject = 'Recuperação de conta'
 
-                recovery = RecoveryAccount(cliente.id, True, False)
+                recovery = RecoveryAccount(cliente.id)
 
                 db.session.add(recovery)
                 db.session.commit()
@@ -175,10 +179,10 @@ def recovery_account(token):
         cliente = Cliente.query.filter_by(email=email).first()
         recovery = RecoveryAccount.query.filter_by(cliente_id=cliente.id).first()
 
+        expiration = recovery.expiration
         active = recovery.active
-        password_modified = recovery.password_modified
 
-        active, password_modified = recovery_token(token, active, password_modified)
+        active = recovery_token(token, expiration, active)
     except SignatureExpired:
         flash('Seu link de recuperação de conta foi expirado.', 'erro')
         return redirect(url_for('clientes.recuperar_conta'))
@@ -190,20 +194,11 @@ def recovery_account(token):
     
     form = ChangePasswordForm()
 
-
     if form.validate_on_submit():
-        if recovery.active:
-            # Comita apenas a tabela RecoveryAccount
-            if recovery.password_modified:
-                # Deleta do banco o recovery para nenhuma outra página passar aberta passar
-                db.session.delete(recovery)
-                db.session.commit()
-                flash('Sua senha já foi alterada', 'erro')
-                return redirect(url_for('clientes.login'))
-            
+        if recovery.active:     
             # Comita senha nova e RecoveryAccount
             cliente.senha = generate_password_hash(form.senha.data, method='sha256')
-            recovery.password_modified = True
+            recovery.active = False
             db.session.commit()
             flash('Sua senha foi alterada!', 'sucesso')
             return redirect(url_for('clientes.login'))

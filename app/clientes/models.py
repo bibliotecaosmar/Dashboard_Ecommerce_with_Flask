@@ -29,25 +29,19 @@ class Cliente(UserMixin, db.Model):
 class ConfirmEmail(db.Model):
     __tablename__ = 'confirmacao_email'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    token = db.Column(db.String(80), nullable=False)
-    expiration = db.Column(db.Integer, nullable=False)
+    expiration = db.Column(db.Integer, nullable=False, default=3600)
     active = db.Column(db.Boolean, nullable=False, default=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
 
-    def __init__(self, token, expiration, cliente_id):
-        self.token = token
-        self.expiration = expiration
+    def __init__(self, cliente_id):
         self.cliente_id = cliente_id
 
 class RecoveryAccount(db.Model):
     __tablename__ = 'recuperacao_conta'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    expiration = db.Column(db.Integer, nullable=False, default=3600)
-    active = db.Column(db.Boolean, nullable=False)
-    password_modified = db.Column(db.Boolean, nullable=False)
+    expiration = db.Column(db.Integer, nullable=False, default=120)
+    active = db.Column(db.Boolean, nullable=False, default=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
 
-    def __init__(self, cliente_id, active, password_modified):
+    def __init__(self, cliente_id):
         self.cliente_id = cliente_id
-        self.active = active
-        self.password_modified = password_modified

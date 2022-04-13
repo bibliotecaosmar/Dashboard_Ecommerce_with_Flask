@@ -10,10 +10,10 @@ def generate_confirmation_token(email):
 def confirm_token(token, expiration, active):
     s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     if active:
-        email = s.loads(token, salt='email-confirm', max_age=expiration)
+        s.loads(token, salt='email-confirm', max_age=expiration)
         active = False   
     else:
-        email = s.loads(token, salt='email-confirm', max_age=0)
+        s.loads(token, salt='email-confirm', max_age=0)
     return active
 
 def decode_confirmation_token(token):
