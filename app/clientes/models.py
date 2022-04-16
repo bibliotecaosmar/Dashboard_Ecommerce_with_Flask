@@ -16,7 +16,7 @@ class Cliente(UserMixin, db.Model):
 
     #Relacionamentos
     confirm_email = db.relationship('ConfirmEmail', uselist=False, backref='clientes') #Relacionamento 1 para 1
-    recovery_account = db.relationship('RecoveryAccount', uselist=False, backref='clientes')
+    recovery_password = db.relationship('RecoveryPassword', uselist=False, backref='clientes')
 
     def __init__(self, nome, email, senha):
         self.nome = nome
@@ -36,10 +36,10 @@ class ConfirmEmail(db.Model):
     def __init__(self, cliente_id):
         self.cliente_id = cliente_id
 
-class RecoveryAccount(db.Model):
-    __tablename__ = 'recuperacao_conta'
+class RecoveryPassword(db.Model):
+    __tablename__ = 'recuperacao_senha'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    expiration = db.Column(db.Integer, nullable=False, default=120)
+    expiration = db.Column(db.Integer, nullable=False, default=600)
     active = db.Column(db.Boolean, nullable=False, default=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
 
