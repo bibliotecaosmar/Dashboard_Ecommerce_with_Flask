@@ -16,8 +16,8 @@ def test_request_register(client):
 # def test_request_confirm_email(client):
 #     ...
 
-def test_request_recuperar_conta(client):
-    assert client.get("/recuperar_conta").status_code == 200
+def test_request_recuperar_senha(client):
+    assert client.get("/recuperar_senha").status_code == 200
 
 # def test_request_recovery_account(client):
 #     ...

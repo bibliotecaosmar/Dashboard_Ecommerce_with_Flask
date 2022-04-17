@@ -1,6 +1,6 @@
 {% extends '/bases/base_login.html' %}
 
-{% block title %}Recuperar Conta{% endblock %}
+{% block title %}Recuperação de Senha{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='clientes/login-register.css') }}">
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAR CONTA</h2>
+    <h2 class="display-2 text-center mt-2 mb-4 pb-3 title-login">RECUPERAÇÃO DE SENHA</h2>
     
     <form class="form-login" action="" method="post">
         {{ form.csrf_token }}
@@ -37,7 +37,7 @@
             {% endif %}
         {% endwith %}
 
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-2">
             {{ form.email(class="form-control", id="emailInput", placeholder="name@example.com") }}  
             <label for="emailInput">Email</label>
 
@@ -50,6 +50,9 @@
                     </ul>
                 </div>
             {% endif %}     
+        </div>
+        <div id="recoveryHelpBlock" class="form-text mb-4">
+            <i class="fa-solid fa-circle-info"></i> Digite seu email para receber um link de recuperação de senha.
         </div>
 
         <div class="row">
