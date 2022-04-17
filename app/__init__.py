@@ -39,9 +39,12 @@ def not_found(error):
 # IMPORTA TODOS OS BLUEPRINT
 from app.home.controller import home
 from app.clientes.controllers import clientes
+from app.conta.controllers import conta
 
 app.register_blueprint(home)
 app.register_blueprint(clientes)
+app.register_blueprint(conta)
 
-
+# IMPORTA TODOS OS MODELOS
 from app.clientes import models
+from app.conta import models
