@@ -14,7 +14,7 @@ migrate:
 init:
 	@poetry add --dev prospector
 	@poetry add --dev pip-audit
-	@poetry add --dev pytest
+	@poetry add --dev pytest -s
 	@poetry add --dev pytest-cov
 
 format:
