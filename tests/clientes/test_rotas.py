@@ -1,5 +1,5 @@
 import pytest
-
+from pprint import pprint
 
 def test_request_home(client):
     assert client.get("/").status_code == 200
@@ -7,8 +7,9 @@ def test_request_home(client):
 def test_request_login(client):
     assert client.get("/login").status_code == 200
 
-# def test_request_logout(client):
-#     ...
+def test_request_logout(auth):
+    auth.login()
+    assert auth.logout().status_code == 200
 
 def test_request_register(client):
     assert client.get("/register").status_code == 200

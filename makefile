@@ -25,7 +25,7 @@ lint:
 	@poetry run prospector --with-tool pydocstyle --doc-warning
 
 test:
-	@poetry run pytest -v
+	@poetry run pytest -vs
 	@poetry run pytest --cov=app tests/
 
 sec:

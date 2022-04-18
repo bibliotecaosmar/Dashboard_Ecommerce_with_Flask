@@ -1,4 +1,7 @@
 import pytest
+from pprint import pprint
+from app.clientes.forms import LoginForm
+
 
 # Testa se links da pasta static estão funcionando
 def test_link_css_home(client):

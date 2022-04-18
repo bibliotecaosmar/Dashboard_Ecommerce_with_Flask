@@ -27,3 +27,23 @@ def client(app):
 @pytest.fixture()
 def runner(app):
     return app.test_cli_runner()
+
+class AuthActions(object):
+    def __init__(self, client):
+        self._client = client
+
+    def login(self, email='gifebo3596@eosbuzz.com', password='1234'):
+        return self._client.post(
+            '/login',
+            data={'email': email, 'password': password},
+            follow_redirects=True
+        )
+
+    def logout(self):
+        return self._client.get('/logout', follow_redirects=True)
+
+
+@pytest.fixture
+def auth(client):
+    return AuthActions(client)
+
