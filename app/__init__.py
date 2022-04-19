@@ -7,6 +7,7 @@ from sqlalchemy_utils import create_database, database_exists
 
 from app.home.controller import home
 from app.clientes.controllers import clientes
+from app.conta.controllers import conta
 
 
 def create_app():
@@ -45,8 +46,10 @@ def create_app():
     # IMPORTA TODOS OS BLUEPRINT
     app.register_blueprint(home)
     app.register_blueprint(clientes)
+    app.register_blueprint(conta)
 
     from app.clientes import models
+    from app.conta import models
 
     return app
 

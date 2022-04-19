@@ -42,6 +42,12 @@ class AuthActions(object):
     def logout(self):
         return self._client.get('/logout', follow_redirects=True)
 
+    def profile(self):
+        return self._client.get('/perfil', follow_redirects=True)
+
+    # Rotas de minha conta
+    def pedidos(self):
+        return self._client.get('/pedidos', follow_redirects=True)
 
 @pytest.fixture
 def auth(client):

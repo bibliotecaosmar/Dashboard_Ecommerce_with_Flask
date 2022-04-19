@@ -14,13 +14,17 @@ def test_request_logout(auth):
 def test_request_register(client):
     assert client.get("/register").status_code == 200
 
+def test_request_perfil(auth):
+    auth.login()
+    assert auth.profile().status_code == 200
+
 # def test_request_confirm_email(client):
 #     ...
 
 def test_request_recuperar_senha(client):
     assert client.get("/recuperar_senha").status_code == 200
 
-# def test_request_recovery_account(client):
+# def test_request_recovery_password(client):
 #     ...
 
 def test_request_url_not_exists(client):
