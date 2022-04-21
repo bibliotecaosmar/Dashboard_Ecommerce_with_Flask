@@ -8,6 +8,7 @@ class Pedido(db.Model):
     total = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(30), nullable=False)
     pagamento_id = db.Column(db.Integer, db.ForeignKey('pagamentos.id'), nullable=False)
+    
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
     
     def __init__(self, total, status, pagamento_id, cliente_id):

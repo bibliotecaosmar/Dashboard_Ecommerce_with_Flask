@@ -220,7 +220,4 @@ def logout():
 def perfil():
     return render_template('clientes/perfil.html', nome=current_user.nome)
 
-@clientes.route('/minha-conta/meus-pedidos')
-@login_required
-def meuspedidos():
-    return 'Meus Pedidos'
+

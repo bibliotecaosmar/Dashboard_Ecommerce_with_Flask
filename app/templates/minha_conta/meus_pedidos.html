@@ -1,0 +1,54 @@
+{% extends '/bases/base.html' %}
+
+{% block title %}Meus Pedidos{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Meus Pedidos</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-end">
+            <a class="btn btn-success mb-2" href="/cadastra_produto" role="button">Adicionar</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">            
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">NÚMERO</th>
+                        <th scope="col">DATA</th>
+                        <th scope="col">TOTAL</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">FORMA DE PAGAMENTO</th>
+                        <th scope="col">CLIENTE</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido, pagamento in pedidos %}
+                    <tr>
+                        <th scope="row">{{pedido.numero}}</th>
+                        <td>{{pedido.data_criacao}}</td>
+                        <td>{{pedido.total}}</td>
+                        <td>{{pedido.status}}</td>
+                        <td>{{pagamento}}</td>
+                        <td>{{pedido.cliente_id}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
