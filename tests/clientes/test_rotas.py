@@ -16,7 +16,10 @@ def test_request_register(client):
 
 def test_request_perfil(auth):
     auth.login()
+    
     assert auth.profile().status_code == 200
+    
+    auth.logout
 
 # def test_request_confirm_email(client):
 #     ...

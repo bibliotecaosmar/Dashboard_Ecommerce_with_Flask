@@ -32,7 +32,7 @@ def create_app():
 
     mail.init_app(app)
 
-    csrf = CSRFProtect(app)
+    # csrf = CSRFProtect(app)
 
     # DATABASE-PRODUÇÃO
     # engine = create_engine('mysql://teste:teste1234@teste.tk/user1')
@@ -52,4 +52,3 @@ def create_app():
     from app.conta import models
 
     return app
-
