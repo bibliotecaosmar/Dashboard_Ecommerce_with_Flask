@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Flask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="style.css") }}">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">          
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand bg-warning mb-2" href="#">Flask Project</a>
+
+                <button class="navbar-toggler mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
+
+                    <form class="d-flex mx-auto col-md-6">
+                        <input class="form-control me-2" type="search" placeholder="Buscar por..." aria-label="Search">
+                        <button class="btn btn-warning" type="submit">Pesquisar</button>
+                    </form>    
+                    
+                    <li class="nav-item dropdown navbar-nav me-5 mb-lg-0">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Minha Conta
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Sair</a></li>
+                        </ul>
+                    </li>
+                </div> 
+            </nav>  
+        </div>
+
+        <div class="row">
+            <div class="sidebar col-md-2 bg-warning">
+                <h1>SIDEBAR</h1> 
+                <h2>Teste</h2>
+                <h2>Teste</h2>
+                <h2>Teste</h2>
+                <h2>Teste</h2>
+                <h2>Teste</h2>
+                <h2>Teste</h2>
+
+            </div>
+            <div class="col-md-10 bg-success content">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col bg-primary">
+                <h1>FOOTER</h1>
+            </div>
+        </div>
+    </div> <!--FIM DO CONTAINER-->
+
+        
+    <script src="{{ url_for('static', filename="js/bootstrap.bundle.min.js") }}"></script>
+</body>
+</html>
